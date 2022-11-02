@@ -1,13 +1,27 @@
-server.port: 8761
+server:
+  port: 8761
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+
+
 spring:
-  application.name: discovery
+  application:
+    name: discovery-service
+
   redis:
     host: localhost
     port: 6379
 
+  config:
+    import: optional:configserver:http://root:secret@localhost:8888
+
 eureka:
-  instance.hostname: localhost
   client:
-    serviceUrl.defaultZone: http://user:secret@localhost:8999/eureka/
-    register-with-eureka: false
-    fetch-registry: false
+    registerWithEureka: false
+    fetchRegistry: false
+
