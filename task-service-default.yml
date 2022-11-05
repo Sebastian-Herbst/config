@@ -1,0 +1,77 @@
+server:
+  port: 9003
+  servlet.context-path: /api/task-service
+  error.include-stacktrace: always
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+spring:
+  application:
+    name: user-service
+
+  config:
+    import: optional:configserver:http://root:secret@localhost:9000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: false
+    format_sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_service_database
+    driverClassName: org.postgresql.Driver
+    username: task_service
+    password: secret
+    hikari:
+      connectionTimeout: 10000  # 10 seconds
+      maximumPoolSize: 10
+      minimumIdle: 1           # min connections that are held
+      idleTimeout: 300000       # 05 minutes
+  data.web:
+    pageable:
+      default-page-size: 10
+  devtools:
+    add-properties: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9099
+
+task-service:
+  bootstrap:
+    testdata: false
+    user: bootstrap_user
+    password: secret
+  default:
+    technical-user: Technical User
+  loadPageSize: 1000
+  scheduler:
+    firstReminderOffsetInMinutes: 1440
+    firstReminderDelayInMilliseconds: 43200000
+    secondReminderOffsetInMinutes: 4320
+    secondReminderDelayInMilliseconds: 43200000
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
