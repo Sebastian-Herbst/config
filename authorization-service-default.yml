@@ -13,11 +13,14 @@ logging:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
 spring:
+  application:
+    name: authorization-service
+
   config:
-    import: optional:configserver:http://root:secret@localhost:9000
+    import: optional:configserver:http://root:secret@localhost:8888
 
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
     format_sql: true
     generate-ddl: true
